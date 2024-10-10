@@ -1,4 +1,4 @@
-
+@description('Prefix name for the VPN Resources')
 param name string
 
 @description('The IP address range from which VPN clients will receive an IP address when connected. Range specified must not overlap with on-premise network')

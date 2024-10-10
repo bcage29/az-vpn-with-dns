@@ -1,4 +1,4 @@
-
+@description('Prefix name for the VPN Resources')
 param name string
 
 module vnet 'bicep/VNET.bicep' = {
