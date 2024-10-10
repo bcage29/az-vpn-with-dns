@@ -230,7 +230,7 @@
             {
               "type": "Microsoft.Network/virtualNetworkGateways",
               "apiVersion": "2024-01-01",
-              "name": "[format('{0}-vpn', parameters('name'))]",
+              "name": "[format('{0}-gateway', parameters('name'))]",
               "location": "[resourceGroup().location]",
               "properties": {
                 "ipConfigurations": [
