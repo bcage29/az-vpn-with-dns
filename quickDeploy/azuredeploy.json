@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.30.23.60470",
-      "templateHash": "3587367687641829399"
+      "templateHash": "10904880828412622790"
     }
   },
   "parameters": {
@@ -23,14 +23,14 @@
         "description": "CIDR block representing the address space of the VNet"
       }
     },
-    "defaultSubPrefix": {
+    "defaultSubnetPrefix": {
       "type": "string",
       "defaultValue": "10.0.0.0/24",
       "metadata": {
-        "description": "CIDR block representing the address space of the VNet"
+        "description": "CIDR block for the default subnet, subset of VNet address space"
       }
     },
-    "gatewaySubPrefix": {
+    "gatewaySubnetPrefix": {
       "type": "string",
       "defaultValue": "10.0.1.0/27",
       "metadata": {
@@ -79,13 +79,12 @@
             "_generator": {
               "name": "bicep",
               "version": "0.30.23.60470",
-              "templateHash": "3804771360530006271"
+              "templateHash": "5257297859156304997"
             }
           },
           "parameters": {
             "name": {
               "type": "string",
-              "defaultValue": "dev-vpn",
               "metadata": {
                 "description": "Prefix name for the VPN Resources"
               }
@@ -97,14 +96,14 @@
                 "description": "CIDR block representing the address space of the VNet"
               }
             },
-            "defaultSubPrefix": {
+            "defaultSubnetPrefix": {
               "type": "string",
               "defaultValue": "10.0.0.0/24",
               "metadata": {
-                "description": "CIDR block representing the address space of the VNet"
+                "description": "CIDR block for the default subnet, subset of VNet address space"
               }
             },
-            "gatewaySubPrefix": {
+            "gatewaySubnetPrefix": {
               "type": "string",
               "defaultValue": "10.0.1.0/27",
               "metadata": {
@@ -128,13 +127,13 @@
                   {
                     "name": "default",
                     "properties": {
-                      "addressPrefix": "[parameters('defaultSubPrefix')]"
+                      "addressPrefix": "[parameters('defaultSubnetPrefix')]"
                     }
                   },
                   {
                     "name": "GatewaySubnet",
                     "properties": {
-                      "addressPrefix": "[parameters('gatewaySubPrefix')]"
+                      "addressPrefix": "[parameters('gatewaySubnetPrefix')]"
                     }
                   }
                 ]

@@ -1,14 +1,14 @@
 @description('Prefix name for the VPN Resources')
-param name string = 'dev-vpn'
+param name string
 
 @description('CIDR block representing the address space of the VNet')
 param virtualNetworkPrefix string = '10.0.0.0/16'
 
-@description('CIDR block representing the address space of the VNet')
-param defaultSubPrefix string = '10.0.0.0/24'
+@description('CIDR block for the default subnet, subset of VNet address space')
+param defaultSubnetPrefix string = '10.0.0.0/24'
 
 @description('CIDR block for the gateway subnet, subset of VNet address space')
-param gatewaySubPrefix string = '10.0.1.0/27'
+param gatewaySubnetPrefix string = '10.0.1.0/27'
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01'= {
   name: '${name}-vn'
@@ -23,13 +23,13 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01'= {
       {
         name: 'default'
         properties:{
-          addressPrefix: defaultSubPrefix
+          addressPrefix: defaultSubnetPrefix
         }
       }
       {
         name: 'GatewaySubnet'
         properties:{
-          addressPrefix: gatewaySubPrefix
+          addressPrefix: gatewaySubnetPrefix
         }
       }
     ]
