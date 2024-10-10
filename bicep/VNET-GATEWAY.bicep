@@ -5,14 +5,12 @@ param name string
 param vpnClientAddressPool string = '172.28.1.0/24'
 
 @description('The SKU of the Gateway. VpnGw1, VpnGw2, VpnGw3')
-param gatewaySku string = 'VpnGw1'
-
-@description('Route based (Dynamic Gateway) or Policy based (Static Gateway)')
 @allowed([
-  'RouteBased'
-  'PolicyBased'
+  'VpnGw1'
+  'VpnGw2'
+  'VpnGw3'
 ])
-param vpnType string = 'RouteBased'
+param gatewaySku string = 'VpnGw1'
 
 var vnet = '${name}-vn'
 var tenantId = subscription().tenantId
@@ -20,7 +18,6 @@ var audience = 'c632b3df-fb67-4d84-bdcf-b95ad541b5c8'
 var tenant = uri(environment().authentication.loginEndpoint, tenantId)
 var issuer = 'https://sts.windows.net/${tenantId}/'
 var gatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnet, 'GatewaySubnet')
-
 
 resource publicIP 'Microsoft.Network/publicIPAddresses@2024-01-01' = {
   name: '${name}-vn-pip'
@@ -59,7 +56,7 @@ resource vpnGateway 'Microsoft.Network/virtualNetworkGateways@2024-01-01' = {
       tier: gatewaySku
     }
     gatewayType: 'Vpn'
-    vpnType: vpnType
+    vpnType: 'RouteBased'
     vpnClientConfiguration: {
       vpnClientAddressPool: {
         addressPrefixes: [
