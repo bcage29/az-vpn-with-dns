@@ -31,7 +31,7 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2024-01-01' = {
 }
 
 resource vpnGateway 'Microsoft.Network/virtualNetworkGateways@2024-01-01' = {
-  name: '${name}-vpn'
+  name: '${name}-gateway'
   location: resourceGroup().location
   properties: {
     ipConfigurations: [
