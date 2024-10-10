@@ -1,0 +1,286 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.30.23.60470",
+      "templateHash": "10534796131745092390"
+    }
+  },
+  "parameters": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "resourceGroupName": "[format('{0}-rg', parameters('name'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "dp-resource-group",
+      "location": "[deployment().location]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[parameters('name')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.30.23.60470",
+              "templateHash": "2072598801724900689"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[deployment().location]"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/resourceGroups",
+              "apiVersion": "2024-03-01",
+              "name": "[format('{0}-rg', parameters('name'))]",
+              "location": "[parameters('location')]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "dp-vnet",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[parameters('name')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.30.23.60470",
+              "templateHash": "4200308313139830273"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string"
+            },
+            "virtualNetworkPrefix": {
+              "type": "string",
+              "defaultValue": "10.0.0.0/16",
+              "metadata": {
+                "description": "CIDR block representing the address space of the VNet"
+              }
+            },
+            "defaultSubPrefix": {
+              "type": "string",
+              "defaultValue": "10.0.0.0/24",
+              "metadata": {
+                "description": "CIDR block representing the address space of the VNet"
+              }
+            },
+            "gatewaySubPrefix": {
+              "type": "string",
+              "defaultValue": "10.0.1.0/27",
+              "metadata": {
+                "description": "CIDR block for the gateway subnet, subset of VNet address space"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2021-02-01",
+              "name": "[format('{0}-vn', parameters('name'))]",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('virtualNetworkPrefix')]"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "default",
+                    "properties": {
+                      "addressPrefix": "[parameters('defaultSubPrefix')]"
+                    }
+                  },
+                  {
+                    "name": "GatewaySubnet",
+                    "properties": {
+                      "addressPrefix": "[parameters('gatewaySubPrefix')]"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'dp-resource-group')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "dp-vnet-gateway",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[parameters('name')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.30.23.60470",
+              "templateHash": "11812829096391353553"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string"
+            },
+            "vpnClientAddressPool": {
+              "type": "string",
+              "defaultValue": "172.28.1.0/24",
+              "metadata": {
+                "description": "The IP address range from which VPN clients will receive an IP address when connected. Range specified must not overlap with on-premise network"
+              }
+            },
+            "gatewaySku": {
+              "type": "string",
+              "defaultValue": "VpnGw1",
+              "metadata": {
+                "description": "The SKU of the Gateway. VpnGw1, VpnGw2, VpnGw3"
+              }
+            },
+            "vpnType": {
+              "type": "string",
+              "defaultValue": "RouteBased",
+              "allowedValues": [
+                "RouteBased",
+                "PolicyBased"
+              ],
+              "metadata": {
+                "description": "Route based (Dynamic Gateway) or Policy based (Static Gateway)"
+              }
+            }
+          },
+          "variables": {
+            "vnet": "[format('{0}-vn', parameters('name'))]",
+            "tenantId": "[subscription().tenantId]",
+            "audience": "c632b3df-fb67-4d84-bdcf-b95ad541b5c8",
+            "tenant": "[uri(environment().authentication.loginEndpoint, variables('tenantId'))]",
+            "issuer": "[format('https://sts.windows.net/{0}/', variables('tenantId'))]",
+            "gatewaySubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet'), 'GatewaySubnet')]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2024-01-01",
+              "name": "[format('{0}-vn-pip', parameters('name'))]",
+              "location": "[resourceGroup().location]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                  "domainNameLabel": "[toLower(format('{0}-vn-pip', parameters('name')))]"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworkGateways",
+              "apiVersion": "2024-01-01",
+              "name": "[format('{0}-vpn', parameters('name'))]",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "ipConfigurations": [
+                  {
+                    "properties": {
+                      "privateIPAllocationMethod": "Dynamic",
+                      "subnet": {
+                        "id": "[variables('gatewaySubnetRef')]"
+                      },
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-vn-pip', parameters('name')))]"
+                      }
+                    },
+                    "name": "vnetGatewayConfig"
+                  }
+                ],
+                "sku": {
+                  "name": "[parameters('gatewaySku')]",
+                  "tier": "[parameters('gatewaySku')]"
+                },
+                "gatewayType": "Vpn",
+                "vpnType": "[parameters('vpnType')]",
+                "vpnClientConfiguration": {
+                  "vpnClientAddressPool": {
+                    "addressPrefixes": [
+                      "[parameters('vpnClientAddressPool')]"
+                    ]
+                  },
+                  "vpnClientProtocols": [
+                    "OpenVPN"
+                  ],
+                  "vpnAuthenticationTypes": [
+                    "AAD"
+                  ],
+                  "aadTenant": "[variables('tenant')]",
+                  "aadAudience": "[variables('audience')]",
+                  "aadIssuer": "[variables('issuer')]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-vn-pip', parameters('name')))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'dp-resource-group')]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'dp-vnet')]"
+      ]
+    }
+  ]
+}
