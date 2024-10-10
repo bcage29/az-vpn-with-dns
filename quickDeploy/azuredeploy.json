@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.30.23.60470",
-      "templateHash": "10904880828412622790"
+      "templateHash": "1756082345788044707"
     }
   },
   "parameters": {
@@ -70,6 +70,15 @@
         "parameters": {
           "name": {
             "value": "[parameters('name')]"
+          },
+          "virtualNetworkPrefix": {
+            "value": "[parameters('virtualNetworkPrefix')]"
+          },
+          "defaultSubnetPrefix": {
+            "value": "[parameters('defaultSubnetPrefix')]"
+          },
+          "gatewaySubnetPrefix": {
+            "value": "[parameters('gatewaySubnetPrefix')]"
           }
         },
         "template": {
@@ -155,6 +164,12 @@
         "parameters": {
           "name": {
             "value": "[parameters('name')]"
+          },
+          "vpnClientAddressPool": {
+            "value": "[parameters('vpnClientAddressPool')]"
+          },
+          "gatewaySku": {
+            "value": "[parameters('gatewaySku')]"
           }
         },
         "template": {
