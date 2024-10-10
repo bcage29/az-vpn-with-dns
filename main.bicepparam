@@ -1,3 +1,3 @@
 using './main.bicep'
 
-param name = ''
+param name = 'dev-vpn'
