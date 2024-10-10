@@ -224,10 +224,7 @@
                 "name": "Standard"
               },
               "properties": {
-                "publicIPAllocationMethod": "Static",
-                "dnsSettings": {
-                  "domainNameLabel": "[toLower(format('{0}-vn-pip', parameters('name')))]"
-                }
+                "publicIPAllocationMethod": "Static"
               }
             },
             {

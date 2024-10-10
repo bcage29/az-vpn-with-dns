@@ -27,9 +27,6 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2024-01-01' = {
   }
   properties: {
     publicIPAllocationMethod: 'Static'
-    dnsSettings: {
-      domainNameLabel: toLower('${name}-vn-pip')
-    }
   }
 }
 
