@@ -1,5 +1,5 @@
-
-param name string
+@description('Prefix name for the VPN Resources')
+param name string = 'dev-vpn'
 
 @description('CIDR block representing the address space of the VNet')
 param virtualNetworkPrefix string = '10.0.0.0/16'
