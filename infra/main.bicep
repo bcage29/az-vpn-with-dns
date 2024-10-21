@@ -2,7 +2,7 @@
 param name string
 
 // VNET
-module vnet 'infra/VNET.bicep' = {
+module vnet 'VNET.bicep' = {
   name: 'dp-vnet'
   params: {
     name: name
@@ -10,7 +10,7 @@ module vnet 'infra/VNET.bicep' = {
 }
 
 // VPN Gateway
-module vnet_gateway 'infra/VNET-GATEWAY.bicep' = {
+module vnet_gateway 'VNET-GATEWAY.bicep' = {
   name: 'dp-vnet-gateway'
   params: {
     name: name
@@ -21,7 +21,7 @@ module vnet_gateway 'infra/VNET-GATEWAY.bicep' = {
 }
 
 // User Assigned Identity
-module uai 'infra/USER-ASSIGNED-IDENTITY.bicep' = {
+module uai 'USER-ASSIGNED-IDENTITY.bicep' = {
   name: 'dp-user-assigned-identity'
   params: {
     name: name
@@ -29,7 +29,7 @@ module uai 'infra/USER-ASSIGNED-IDENTITY.bicep' = {
 }
 
 // DNS Forwarder and IP Sync Containers
-module containers 'infra/CONTAINERS.bicep' = {
+module containers 'CONTAINERS.bicep' = {
   name: 'dp-containers'
   params: {
     name: name
