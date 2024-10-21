@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/azure-cli AS base
 
-LABEL org.opencontainers.image.source=https://github.com/bcage29/devAzVPN
+LABEL org.opencontainers.image.source=https://github.com/bcage29/az-vpn-with-dns
 
 COPY monitorIPAddress.sh /app/
 
