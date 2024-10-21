@@ -1,4 +1,4 @@
-# Create a Point-to-Site VPN with Entra ID Authentication
+# Create a Point-to-Site VPN with Entra ID Authentication and DNS Resolution
 
 ## Summary
 Creating a VPN into your VNET *used* to be complicated. Click the "Deploy to Azure" button below to create a VPN to your VNET in a few minutes. Now you don't have to think about if you should enable public access to that database, go ahead and create resources with ONLY private access.
