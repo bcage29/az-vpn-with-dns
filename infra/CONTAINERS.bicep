@@ -14,10 +14,10 @@ param ipAddressSyncContainerName string = 'ip-address-sync'
 param location string = resourceGroup().location
 
 @description('Container image to deploy. Should be of the form repoName/imagename:tag for images stored in public Docker Hub, or a fully qualified URI for other registries. Images from private registries require additional registry credentials.')
-param dnsImage string = 'ghcr.io/bcage29/az-dns-forwarder:latest'
+param dnsImage string
 
 @description('Container image to deploy. Should be of the form repoName/imagename:tag for images stored in public Docker Hub, or a fully qualified URI for other registries. Images from private registries require additional registry credentials.')
-param ipAddressSyncImage string = 'ghcr.io/bcage29/az-dns-ip-sync:latest'
+param ipAddressSyncImage string
 
 @description('Port to open on the container.')
 param dnsPort int = 53

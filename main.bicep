@@ -34,7 +34,7 @@ module containers 'infra/CONTAINERS.bicep' = {
   params: {
     name: name
     dnsImage: 'ghcr.io/bcage29/az-dns-forwarder:latest'
-    ipAddressSyncImage: 'ghcr.io/bcage29/az-dns-ip-sync:latest'
+    ipAddressSyncImage: 'ghcr.io/bcage29/az-dns-forwarder/ip-sync:latest'
   }
   dependsOn: [
     uai
