@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-LABEL org.opencontainers.image.source https://github.com/bcage29/devAzVPN
+LABEL org.opencontainers.image.source=https://github.com/bcage29/devAzVPN
 
 # Copy the bind configuration files
 ADD named.conf /etc/bind/
