@@ -13,3 +13,15 @@ Creating a VPN into your VNET *used* to be complicated. Click the "Deploy to Azu
 - Click the "Deploy to Azure" button or clone this repository and deploy the main.bicep file
 - After the VPN Gateway has deployed succesfully, follow these [steps](https://learn.microsoft.com/en-us/azure/vpn-gateway/point-to-site-entra-gateway#download) to configure the VPN
 
+
+## Build
+
+```bash
+docker build . -t ghcr.io/bcage29/az-dns-forwarder:latest --platform linux/amd64
+```
+
+## Push
+
+```bash
+docker push ghcr.io/bcage29/az-dns-forwarder:latest
+```

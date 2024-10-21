@@ -10,8 +10,11 @@ param defaultSubnetPrefix string = '10.0.0.0/24'
 @description('CIDR block for the gateway subnet, subset of VNet address space')
 param gatewaySubnetPrefix string = '10.0.1.0/27'
 
+@description('CIDR block for the dns subnet, subset of VNet address space')
+param dnsSubnetPrefix string = '10.0.1.48/29'
+
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01'= {
-  name: '${name}-vn'
+  name: '${name}-vnet'
   location: resourceGroup().location
   properties: {
     addressSpace: {
@@ -30,6 +33,20 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01'= {
         name: 'GatewaySubnet'
         properties:{
           addressPrefix: gatewaySubnetPrefix
+        }
+      }
+      {
+        name: 'DnsSubnet'
+        properties:{
+          addressPrefix: dnsSubnetPrefix
+          delegations: [
+            {
+              name: 'aciDelegation'
+              properties: {
+                serviceName: 'Microsoft.ContainerInstance/containerGroups'
+              }
+            }
+          ]
         }
       }
     ]

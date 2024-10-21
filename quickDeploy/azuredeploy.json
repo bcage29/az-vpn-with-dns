@@ -5,55 +5,14 @@
     "_generator": {
       "name": "bicep",
       "version": "0.30.23.60470",
-      "templateHash": "1756082345788044707"
+      "templateHash": "11221030682047927678"
     }
   },
   "parameters": {
     "name": {
       "type": "string",
-      "defaultValue": "dev-vpn",
       "metadata": {
         "description": "Prefix name for the VPN Resources"
-      }
-    },
-    "virtualNetworkPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/16",
-      "metadata": {
-        "description": "CIDR block representing the address space of the VNet"
-      }
-    },
-    "defaultSubnetPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/24",
-      "metadata": {
-        "description": "CIDR block for the default subnet, subset of VNet address space"
-      }
-    },
-    "gatewaySubnetPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.1.0/27",
-      "metadata": {
-        "description": "CIDR block for the gateway subnet, subset of VNet address space"
-      }
-    },
-    "vpnClientAddressPool": {
-      "type": "string",
-      "defaultValue": "172.28.1.0/24",
-      "metadata": {
-        "description": "The IP address range from which VPN clients will receive an IP address when connected. Range specified must not overlap with on-premise network"
-      }
-    },
-    "gatewaySku": {
-      "type": "string",
-      "defaultValue": "VpnGw1",
-      "allowedValues": [
-        "VpnGw1",
-        "VpnGw2",
-        "VpnGw3"
-      ],
-      "metadata": {
-        "description": "The SKU of the Gateway. VpnGw1, VpnGw2, VpnGw3"
       }
     }
   },
@@ -70,15 +29,6 @@
         "parameters": {
           "name": {
             "value": "[parameters('name')]"
-          },
-          "virtualNetworkPrefix": {
-            "value": "[parameters('virtualNetworkPrefix')]"
-          },
-          "defaultSubnetPrefix": {
-            "value": "[parameters('defaultSubnetPrefix')]"
-          },
-          "gatewaySubnetPrefix": {
-            "value": "[parameters('gatewaySubnetPrefix')]"
           }
         },
         "template": {
@@ -88,7 +38,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.30.23.60470",
-              "templateHash": "5257297859156304997"
+              "templateHash": "395998183493002386"
             }
           },
           "parameters": {
@@ -118,13 +68,20 @@
               "metadata": {
                 "description": "CIDR block for the gateway subnet, subset of VNet address space"
               }
+            },
+            "dnsSubnetPrefix": {
+              "type": "string",
+              "defaultValue": "10.0.1.48/29",
+              "metadata": {
+                "description": "CIDR block for the dns subnet, subset of VNet address space"
+              }
             }
           },
           "resources": [
             {
               "type": "Microsoft.Network/virtualNetworks",
               "apiVersion": "2021-02-01",
-              "name": "[format('{0}-vn', parameters('name'))]",
+              "name": "[format('{0}-vnet', parameters('name'))]",
               "location": "[resourceGroup().location]",
               "properties": {
                 "addressSpace": {
@@ -143,6 +100,20 @@
                     "name": "GatewaySubnet",
                     "properties": {
                       "addressPrefix": "[parameters('gatewaySubnetPrefix')]"
+                    }
+                  },
+                  {
+                    "name": "DnsSubnet",
+                    "properties": {
+                      "addressPrefix": "[parameters('dnsSubnetPrefix')]",
+                      "delegations": [
+                        {
+                          "name": "aciDelegation",
+                          "properties": {
+                            "serviceName": "Microsoft.ContainerInstance/containerGroups"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]
@@ -164,12 +135,6 @@
         "parameters": {
           "name": {
             "value": "[parameters('name')]"
-          },
-          "vpnClientAddressPool": {
-            "value": "[parameters('vpnClientAddressPool')]"
-          },
-          "gatewaySku": {
-            "value": "[parameters('gatewaySku')]"
           }
         },
         "template": {
@@ -179,12 +144,15 @@
             "_generator": {
               "name": "bicep",
               "version": "0.30.23.60470",
-              "templateHash": "10218658162578436193"
+              "templateHash": "3095048137211733911"
             }
           },
           "parameters": {
             "name": {
-              "type": "string"
+              "type": "string",
+              "metadata": {
+                "description": "Prefix name for the VPN Resources"
+              }
             },
             "vpnClientAddressPool": {
               "type": "string",
@@ -207,7 +175,7 @@
             }
           },
           "variables": {
-            "vnet": "[format('{0}-vn', parameters('name'))]",
+            "vnet": "[format('{0}-vnet', parameters('name'))]",
             "tenantId": "[subscription().tenantId]",
             "audience": "c632b3df-fb67-4d84-bdcf-b95ad541b5c8",
             "tenant": "[uri(environment().authentication.loginEndpoint, variables('tenantId'))]",
@@ -218,7 +186,7 @@
             {
               "type": "Microsoft.Network/publicIPAddresses",
               "apiVersion": "2024-01-01",
-              "name": "[format('{0}-vn-pip', parameters('name'))]",
+              "name": "[format('{0}-gateway-pip', parameters('name'))]",
               "location": "[resourceGroup().location]",
               "sku": {
                 "name": "Standard"
@@ -241,7 +209,7 @@
                         "id": "[variables('gatewaySubnetRef')]"
                       },
                       "publicIPAddress": {
-                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-vn-pip', parameters('name')))]"
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-gateway-pip', parameters('name')))]"
                       }
                     },
                     "name": "vnetGatewayConfig"
@@ -271,13 +239,385 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-vn-pip', parameters('name')))]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-gateway-pip', parameters('name')))]"
               ]
             }
           ]
         }
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'dp-vnet')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "dp-user-assigned-identity",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[parameters('name')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.30.23.60470",
+              "templateHash": "4300062400613369405"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "Prefix name for the VPN Resources"
+              }
+            }
+          },
+          "variables": {
+            "networkContributorRoleId": "4d97b98b-1d4f-4787-a291-c67834d212e7",
+            "containerInstancesContributorRoleId": "5d977122-f97e-4b4d-a52f-6b43003ddb4d"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2023-07-31-preview",
+              "name": "[format('{0}-dns-uai', parameters('name'))]",
+              "location": "[resourceGroup().location]"
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "dp-role-assignment-network",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "identityId": {
+                    "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-dns-uai', parameters('name')))]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[variables('networkContributorRoleId')]"
+                  },
+                  "principalId": {
+                    "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-dns-uai', parameters('name'))), '2023-07-31-preview').principalId]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.30.23.60470",
+                      "templateHash": "2912468473042502724"
+                    }
+                  },
+                  "parameters": {
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "roleDefinitionId": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string"
+                    }
+                  },
+                  "variables": {
+                    "roleAssignmentName": "[guid(parameters('identityId'), parameters('roleDefinitionId'), resourceGroup().id)]"
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[variables('roleAssignmentName')]",
+                      "properties": {
+                        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]",
+                        "principalType": "ServicePrincipal",
+                        "principalId": "[parameters('principalId')]"
+                      }
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-dns-uai', parameters('name')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "dp-role-assignment-container-instances",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "identityId": {
+                    "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-dns-uai', parameters('name')))]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[variables('containerInstancesContributorRoleId')]"
+                  },
+                  "principalId": {
+                    "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-dns-uai', parameters('name'))), '2023-07-31-preview').principalId]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.30.23.60470",
+                      "templateHash": "2912468473042502724"
+                    }
+                  },
+                  "parameters": {
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "roleDefinitionId": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string"
+                    }
+                  },
+                  "variables": {
+                    "roleAssignmentName": "[guid(parameters('identityId'), parameters('roleDefinitionId'), resourceGroup().id)]"
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[variables('roleAssignmentName')]",
+                      "properties": {
+                        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))]",
+                        "principalType": "ServicePrincipal",
+                        "principalId": "[parameters('principalId')]"
+                      }
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-dns-uai', parameters('name')))]"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "dp-containers",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[parameters('name')]"
+          },
+          "dnsImage": {
+            "value": "ghcr.io/bcage29/az-dns-forwarder:latest"
+          },
+          "ipAddressSyncImage": {
+            "value": "ghcr.io/bcage29/az-dns-ip-sync:latest"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.30.23.60470",
+              "templateHash": "14603752069993940587"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Prefix name for the VPN Resources"
+              }
+            },
+            "dnsContainerGroupName": {
+              "type": "string",
+              "defaultValue": "dns-container-group",
+              "metadata": {
+                "description": "Name for the dns container group"
+              }
+            },
+            "dnsContainerName": {
+              "type": "string",
+              "defaultValue": "dns",
+              "metadata": {
+                "description": "Name for the dns container"
+              }
+            },
+            "ipAddressSyncContainerName": {
+              "type": "string",
+              "defaultValue": "ip-address-sync",
+              "metadata": {
+                "description": "Name for the IP Address Sync container"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location for all resources."
+              }
+            },
+            "dnsImage": {
+              "type": "string",
+              "defaultValue": "ghcr.io/bcage29/az-dns-forwarder:latest",
+              "metadata": {
+                "description": "Container image to deploy. Should be of the form repoName/imagename:tag for images stored in public Docker Hub, or a fully qualified URI for other registries. Images from private registries require additional registry credentials."
+              }
+            },
+            "ipAddressSyncImage": {
+              "type": "string",
+              "defaultValue": "ghcr.io/bcage29/az-dns-ip-sync:latest",
+              "metadata": {
+                "description": "Container image to deploy. Should be of the form repoName/imagename:tag for images stored in public Docker Hub, or a fully qualified URI for other registries. Images from private registries require additional registry credentials."
+              }
+            },
+            "dnsPort": {
+              "type": "int",
+              "defaultValue": 53,
+              "metadata": {
+                "description": "Port to open on the container."
+              }
+            },
+            "cpuCores": {
+              "type": "int",
+              "defaultValue": 1,
+              "metadata": {
+                "description": "The number of CPU cores to allocate to the container."
+              }
+            },
+            "memoryInGb": {
+              "type": "int",
+              "defaultValue": 1,
+              "metadata": {
+                "description": "The amount of memory to allocate to the container in gigabytes."
+              }
+            },
+            "restartPolicy": {
+              "type": "string",
+              "defaultValue": "Always",
+              "allowedValues": [
+                "Always",
+                "Never",
+                "OnFailure"
+              ],
+              "metadata": {
+                "description": "The behavior of Azure runtime if container has stopped."
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ContainerInstance/containerGroups",
+              "apiVersion": "2024-05-01-preview",
+              "name": "[parameters('dnsContainerGroupName')]",
+              "location": "[parameters('location')]",
+              "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}-dns-uai', parameters('name'))))]": {}
+                }
+              },
+              "properties": {
+                "containers": [
+                  {
+                    "name": "[parameters('dnsContainerName')]",
+                    "properties": {
+                      "image": "[parameters('dnsImage')]",
+                      "ports": [
+                        {
+                          "port": "[parameters('dnsPort')]",
+                          "protocol": "UDP"
+                        }
+                      ],
+                      "resources": {
+                        "requests": {
+                          "cpu": "[parameters('cpuCores')]",
+                          "memoryInGB": "[parameters('memoryInGb')]"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "name": "[parameters('ipAddressSyncContainerName')]",
+                    "properties": {
+                      "image": "[parameters('ipAddressSyncImage')]",
+                      "ports": [],
+                      "resources": {
+                        "requests": {
+                          "cpu": "[parameters('cpuCores')]",
+                          "memoryInGB": "[parameters('memoryInGb')]"
+                        }
+                      },
+                      "environmentVariables": [
+                        {
+                          "name": "RESOURCE_GROUP_NAME",
+                          "value": "[resourceGroup().name]"
+                        },
+                        {
+                          "name": "CONTAINER_GROUP_NAME",
+                          "value": "[parameters('dnsContainerGroupName')]"
+                        },
+                        {
+                          "name": "VNET_NAME",
+                          "value": "[format('{0}-vnet', parameters('name'))]"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "osType": "Linux",
+                "restartPolicy": "[parameters('restartPolicy')]",
+                "ipAddress": {
+                  "type": "Private",
+                  "ports": [
+                    {
+                      "port": "[parameters('dnsPort')]",
+                      "protocol": "UDP"
+                    }
+                  ]
+                },
+                "subnetIds": [
+                  {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', format('{0}-vnet', parameters('name')), 'DnsSubnet')]",
+                    "name": "DnsSubnet"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'dp-user-assigned-identity')]",
         "[resourceId('Microsoft.Resources/deployments', 'dp-vnet')]"
       ]
     }

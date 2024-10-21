@@ -12,7 +12,7 @@ param vpnClientAddressPool string = '172.28.1.0/24'
 ])
 param gatewaySku string = 'VpnGw1'
 
-var vnet = '${name}-vn'
+var vnet = '${name}-vnet'
 var tenantId = subscription().tenantId
 var audience = 'c632b3df-fb67-4d84-bdcf-b95ad541b5c8'
 var tenant = uri(environment().authentication.loginEndpoint, tenantId)
@@ -20,7 +20,7 @@ var issuer = 'https://sts.windows.net/${tenantId}/'
 var gatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnet, 'GatewaySubnet')
 
 resource publicIP 'Microsoft.Network/publicIPAddresses@2024-01-01' = {
-  name: '${name}-vn-pip'
+  name: '${name}-gateway-pip'
   location: resourceGroup().location
   sku: {
     name: 'Standard'
