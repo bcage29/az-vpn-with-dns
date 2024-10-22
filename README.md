@@ -1,7 +1,7 @@
 # Create a Point-to-Site VPN with Entra ID Authentication and DNS Resolution
 
 ## Summary
-Creating a VPN into your VNET *used* to be complicated. Click the "Deploy to Azure" button below to create a VPN to your VNET in a few minutes. Now you don't have to think about if you should enable public access to that database, go ahead and create resources with ONLY private access.
+Creating a VPN into your VNET *used* to be complicated. Click the `Deploy to Azure` button below to create a VPN to your VNET in a few minutes. Now you don't have to think about if you should enable public access to that database, go ahead and create resources with ONLY private access.
 
 [![Deploy To Azure](https://raw.githubusercontent.com/bcage29/az-vpn-with-dns/main/quickDeploy/deploytoazure.svg)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbcage29%2Faz-vpn-with-dns%2Fmain%2FquickDeploy%2Fazuredeploy.json)
 
