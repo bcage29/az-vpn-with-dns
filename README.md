@@ -24,13 +24,26 @@ The DNS Forwarder is a container instance that runs a simple [DNS server](./cont
 If you don't want to use the containers for DNS resolution and want a more robust solution, you can use [Azure Private DNS Resolver](https://learn.microsoft.com/en-us/azure/dns/dns-private-resolver-overview) to resolve DNS queries. If you deploy this resource, you will need to create an Inbound Endpoint. Once that endpoint is provisioned, you can update the VNET DNS Servers setting to use the Private DNS Resolver Inbound Endpoint Private IP address.
 
 ## Steps to deploy
-- Click the "Deploy to Azure" button above *or* clone this repository and deploy the [main.bicep](./infra/main.bicep) file
-- Download the VPN client
-    - Unzip the VPN client
-    - Open 'Azure VPN Client' app and click 'Import'
-    - Select the 'azurevpnconfig.xml' file
-    - Connect to the VPN
-    - For more detailed steps, refer to the [Point-to-Site documentation](https://learn.microsoft.com/en-us/azure/vpn-gateway/point-to-site-entra-gateway#download)
+
+1. Click the `Deploy to Azure` button above *or* clone this repository and deploy the [main.bicep](./infra/main.bicep) file
+1. Choose a resource group, a region and a name then click `Create`
+   
+    > Note: The deployment of the gateway could take 15-45 mins
+
+1. While you wait for the deployment, download the Azure VPN Client app (https://aka.ms/azvpnclientdownload)[https://aka.ms/azvpnclientdownload]
+1. Once deployed, navigate to the `VNET Gateway > Settings > Point-to-site configuration` and download the VPN client configuration from the Azure portal
+1. Unzip the VPN client configuration to a local folder (note the directory)
+1. On the desktop, open the Azure VPN Client app and click the `+` sign to add a new connection
+1. Click import and navigate to the folder with the configuration file
+1. Select the `azurevpnconfig.xml` file and click `Save`
+
+## Connect to the VPN
+
+1. Open the Azure VPN client app and choose connect
+1. Log in using your Entra ID to establish the VPN connection to your Azure VNET from your machine
+1. You should be able to ping your machines and access your Azure Networks and via the private IP address
+
+    > Note: For more detailed steps, refer to the [Point-to-Site documentation](https://learn.microsoft.com/en-us/azure/vpn-gateway/point-to-site-entra-gateway#download)
 
 ## Container Images
 
