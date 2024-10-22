@@ -47,7 +47,7 @@ If you don't want to use the containers for DNS resolution and want a more robus
 
 ## Container Images
 
-The two containers I am using for [DNS](https://ghcr.io/bcage29/az-dns-forwarder:latest) and [IP Address Sync](https://ghcr.io/bcage29/az-dns-forwarder/ip-sync:latest) are available on GitHub Container Registry and free for use. If you want to build your own images, the source code is available in the [containers](./containers) directory. 
+The two containers I am using for [DNS](https://ghcr.io/bcage29/az-dns-forwarder:latest) and [IP Address Sync](https://ghcr.io/bcage29/az-dns-forwarder/ip-address-sync:latest) are available on GitHub Container Registry and free for use. If you want to build your own images, the source code is available in the [containers](./containers) directory. 
 
 
 Format for pushing to github container registry `ghcr.io/OWNER/IMAGE_NAME:TAG`
@@ -59,9 +59,9 @@ docker build ./containers/dns/ -t ghcr.io/bcage29/az-dns-forwarder:latest --plat
 docker push ghcr.io/bcage29/az-dns-forwarder:latest
 
 # ip sync
-docker build ./containers/ipAddressSync/ -t ghcr.io/bcage29/az-dns-forwarder/ip-sync:latest --platform linux/amd64
+docker build ./containers/ipAddressSync/ -t ghcr.io/bcage29/az-dns-forwarder/ip-address-sync:latest --platform linux/amd64
 
-docker push ghcr.io/bcage29/az-dns-forwarder/ip-sync:latest
+docker push ghcr.io/bcage29/az-dns-forwarder/ip-address-sync:latest
 ```
 
 ## Learn more

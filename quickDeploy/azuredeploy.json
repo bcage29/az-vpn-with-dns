@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.30.23.60470",
-      "templateHash": "8276537664467829205"
+      "templateHash": "12529147997357015985"
     }
   },
   "parameters": {
@@ -437,7 +437,7 @@
             "value": "ghcr.io/bcage29/az-dns-forwarder:latest"
           },
           "ipAddressSyncImage": {
-            "value": "ghcr.io/bcage29/az-dns-forwarder/ip-sync:latest"
+            "value": "ghcr.io/bcage29/az-dns-forwarder/ip-address-sync:latest"
           }
         },
         "template": {
@@ -447,7 +447,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.30.23.60470",
-              "templateHash": "14603752069993940587"
+              "templateHash": "37832236909737428"
             }
           },
           "parameters": {
@@ -488,14 +488,12 @@
             },
             "dnsImage": {
               "type": "string",
-              "defaultValue": "ghcr.io/bcage29/az-dns-forwarder:latest",
               "metadata": {
                 "description": "Container image to deploy. Should be of the form repoName/imagename:tag for images stored in public Docker Hub, or a fully qualified URI for other registries. Images from private registries require additional registry credentials."
               }
             },
             "ipAddressSyncImage": {
               "type": "string",
-              "defaultValue": "ghcr.io/bcage29/az-dns-ip-sync:latest",
               "metadata": {
                 "description": "Container image to deploy. Should be of the form repoName/imagename:tag for images stored in public Docker Hub, or a fully qualified URI for other registries. Images from private registries require additional registry credentials."
               }
