@@ -31,8 +31,8 @@ If you don't want to use the containers for DNS resolution and want a more robus
     > Note: The deployment of the gateway could take 15-45 mins
 
 1. While you wait for the deployment, download the Azure VPN Client app (https://aka.ms/azvpnclientdownload)[https://aka.ms/azvpnclientdownload]
-1. Once deployed, navigate to the `VNET Gateway > Settings > Point-to-site configuration` and download the VPN client configuration from the Azure portal
-1. Unzip the VPN client configuration to a local folder (note the directory)
+1. Once deployed, navigate to the `Virtual Network Gateway > Settings > Point-to-site configuration` and download the VPN client from the Azure portal
+1. Unzip the VPN client to a local folder (note the directory)
 1. On the desktop, open the Azure VPN Client app and click the `+` sign to add a new connection
 1. Click import and navigate to the folder with the configuration file
 1. Select the `azurevpnconfig.xml` file and click `Save`
@@ -41,13 +41,13 @@ If you don't want to use the containers for DNS resolution and want a more robus
 
 1. Open the Azure VPN client app and choose connect
 1. Log in using your Entra ID to establish the VPN connection to your Azure VNET from your machine
-1. You should be able to ping your machines and access your Azure Networks and via the private IP address
+1. You should be able to ping your machines, access your Azure Networks and resolve resources to their private IP addresses
 
     > Note: For more detailed steps, refer to the [Point-to-Site documentation](https://learn.microsoft.com/en-us/azure/vpn-gateway/point-to-site-entra-gateway#download)
 
 ## Container Images
 
-The two containers I am using for [DNS](https://ghcr.io/bcage29/az-dns-forwarder:latest) and [IP Sync](https://ghcr.io/bcage29/az-dns-forwarder/ip-sync:latest) are available on GitHub Container Registry and free for use. If you want to build your own images, the source code is available in the [containers](./containers) directory. 
+The two containers I am using for [DNS](https://ghcr.io/bcage29/az-dns-forwarder:latest) and [IP Address Sync](https://ghcr.io/bcage29/az-dns-forwarder/ip-sync:latest) are available on GitHub Container Registry and free for use. If you want to build your own images, the source code is available in the [containers](./containers) directory. 
 
 
 Format for pushing to github container registry `ghcr.io/OWNER/IMAGE_NAME:TAG`
